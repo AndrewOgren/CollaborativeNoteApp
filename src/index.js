@@ -1,10 +1,20 @@
-import $ from 'jquery';
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import './style.scss';
 
-$('#main').html('Here we go baby!');
+class App extends Component {
 
-let numSecs = 0;
-setInterval(() => {
-  numSecs += 1;
-  document.getElementById('main').innerHTML = `You've been on this page for ${numSecs} seconds.`;
-}, 1000);
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+
+    );
+  }
+
+}
+
+
+ReactDOM.render(<App />, document.getElementById('main'));
