@@ -4,3 +4,18 @@ body {
   font-family: "Arial", sans-serif;
   background: darken(white, 0.2);
 }
+
+.Note {
+  border: 1px solid rgb(90, 92, 90);
+  box-shadow: 2px 2px 8px black;
+  background-color: rgb(137, 98, 161);
+  padding: 10px;
+  margin: 10px;
+
+}
+
+.noteCreationContainer {
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+}
