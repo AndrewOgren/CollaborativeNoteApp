@@ -8,11 +8,60 @@ body {
 .Note {
   border: 1px solid rgb(90, 92, 90);
   box-shadow: 2px 2px 8px black;
-  background-color: rgb(137, 98, 161);
+  background-color: rgb(244, 236, 180);
   padding: 10px;
   margin: 10px;
 
 }
+
+.titleBarContainer {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titleBarItem {
+  display: flex;
+  padding: 5px;
+  margin: 10px;
+}
+
+#delete, #edit, #drag {
+  margin: 5px;
+}
+
+#editBox {
+  width: 250px;
+  height: 200px;
+  box-shadow: 1px 1px 8px black;
+}
+
+.editBoxContainer {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 10px;
+}
+
+.editBoxItem {
+  display: flex;
+  margin: 5px;
+
+}
+
+.contentArea {
+  border: 1px solid black;
+  border-radius: 8px;
+  word-break: break-all;
+  min-width: 200px;
+  max-width: 400px;
+  min-height: 200px;
+  margin: 20px;
+  padding: 5px;
+}
+
 
 .noteCreationContainer {
   display: flex;
