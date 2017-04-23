@@ -14,8 +14,8 @@ class TextBar extends Component {
 
   render() {
     return (
-      <div id="noteTitle">
-        <input onChange={this.onInputChange} value={this.state.noteTitle} />
+      <div>
+        <input id="noteTitle" onChange={this.onInputChange} placeholder="Add Note Title" value={this.state.noteTitle} />
       </div>
     );
   }

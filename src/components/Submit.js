@@ -15,8 +15,8 @@ class Submit extends Component {
 
   render() {
     return (
-      <button onClick={this.beginCreationOfNote}>
-        Submit
+      <button id="createNoteButton" onClick={this.beginCreationOfNote}>
+        Create Note
       </button>
     );
   }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Textarea from 'react-textarea-autosize';
+import * as firebasedb from '../firebasedb';
 
 class EditBox extends Component {
   constructor(props) {
@@ -11,17 +12,16 @@ class EditBox extends Component {
 
   onInputChange(event) {
     this.setState({ content: event.target.value });
-    console.log(event.target.value);
   }
 
   addNewContent() {
-    this.props.doneEditing(this.props.id, this.state.content);
+    firebasedb.doneEditing(this.props.id, this.state.content);
   }
 
   render() {
     return (
       <div className="editBoxContainer">
-        <Textarea className="editBoxItem" id="editBox" onChange={this.onInputChange} value={this.state.content} />
+        <Textarea rows="10" cols="20" className="editBoxItem" id="editBox" onChange={this.onInputChange} value={this.state.content} />
         <button className="editBoxItem" id="doneEditing" onClick={this.addNewContent}>
           Done Editing
         </button>

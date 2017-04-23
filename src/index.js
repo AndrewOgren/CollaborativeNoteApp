@@ -3,6 +3,7 @@ import marked from 'marked';
 import Draggable from 'react-draggable';
 import Immutable from 'immutable';
 import ReactDOM from 'react-dom';
+import * as firebasedb from './firebasedb';
 import TextBar from './components/textBar';
 import Submit from './components/Submit';
 import Note from './components/note';
@@ -22,58 +23,39 @@ class App extends Component {
       isEditing: false,
     };
 
+    this.componentDidMount = this.componentDidMount.bind(this);
     this.onStopDrag = this.onStopDrag.bind(this);
-    this.doneEditing = this.doneEditing.bind(this);
-    this.startEditing = this.startEditing.bind(this);
     this.renderContent = this.renderContent.bind(this);
     this.createNote = this.createNote.bind(this);
     this.updateText = this.updateText.bind(this);
-    this.onDeleteClick = this.onDeleteClick.bind(this);
+  }
+
+  componentDidMount() {
+    firebasedb.fetchNotes((notes) => {
+      console.log(notes);
+      this.setState({ notes: Immutable.Map(notes) });
+    });
   }
 
   /* Dragging callback methods*/
   onStartDrag(e, ui) {
     console.log('just started draggin');
   }
-
   onStopDrag(e, ui) {
-    console.log(e);
-    console.log(ui);
-    const id = Number(ui.node.accessKey);
-    let note = this.state.notes.get(id);
-    note = note.set('x', Number(ui.x));
-    note = note.set('y', Number(ui.y));
-
-    this.setState({
-      notes: this.state.notes.set(id, note),
-    });
+    const id = (ui.node.accessKey);
+    firebasedb.updatePosition(ui.x, ui.y, id);
   }
-
   onDrag(e, ui) {
     console.log('draggin now');
   }
 
-  onDeleteClick(id) {
-    this.setState({
-      notes: this.state.notes.delete(id),
-    });
-  }
-
-  startEditing(id) {
-    this.setState({
-      isEditing: true,
-      notes: this.state.notes.update(id, (note) => { return note.set('isBeingEdited', true); }),
-    });
-  }
+  /* Note functionality */
 
   createNote() {
-    const newID = this.state.id + 1;
     let note = Note;
     note = note.set('title', this.state.currentTitleText);
-    this.setState({
-      id: newID,
-      notes: this.state.notes.set(newID, note),
-    });
+    console.log(note);
+    firebasedb.addNote(JSON.parse(JSON.stringify(note)));
   }
 
   updateText(text) {
@@ -82,41 +64,31 @@ class App extends Component {
     });
   }
 
-  doneEditing(id, content) {
-    let updatedNote = this.state.notes.get(id);
-    updatedNote = updatedNote.set('text', content);
-    updatedNote = updatedNote.set('isBeingEdited', false);
-
-    this.setState({
-      isEditing: false,
-      notes: this.state.notes.update(id, (note) => { return updatedNote; }),
-    });
-  }
-
   renderContent(id) {
-    if (this.state.notes.get(id).get('isBeingEdited')) {
-      return <EditBox doneEditing={this.doneEditing} id={id} />;
+    if (this.state.notes.get(id).isBeingEdited) {
+      return <EditBox id={id} />;
     } else {
       /*eslint-disable*/
-      return <div dangerouslySetInnerHTML={{ __html: marked(this.state.notes.get(id).get('text') || '') }} />;
+      return <div dangerouslySetInnerHTML={{ __html: marked(this.state.notes.get(id).text || '') }} />;
       /*eslint-enable*/
     }
   }
 
 
   render() {
-    // console.log(this.state.notes);
     const Notes = this.state.notes.entrySeq().map(([id, note]) => {
-      const title = note.get('title');
+      const title = note.title;
+
       const noteStyle = {
         position: 'absolute',
-        top: note.get('y'),
-        left: note.get('x'),
-        zIndex: note.get('zIndex'),
+        top: note.y,
+        left: note.x,
+        zIndex: note.zIndex,
       };
       /*eslint-disable */
       return (
         <Draggable
+          defaultPosition={{x: 0, y: 0}}
           onStart={this.onStartDrag}
           onDrag={this.onDrag}
           onStop={this.onStopDrag}
@@ -125,8 +97,8 @@ class App extends Component {
             <div className="titleBarContainer">
               <h1 className="titleBarItem noteTitle">{title}</h1>
               <div className="titleBarItem">
-                <i onClick={() => this.onDeleteClick(id)} id="delete" className="fa fa-trash-o" />
-                <i onClick={() => this.startEditing(id)} id="edit" className="fa fa-pencil" />
+                <i onClick={() => firebasedb.deleteNote(id)} id="delete" className="fa fa-trash-o" />
+                <i onClick={() => firebasedb.isEditing(id)} id="edit" className="fa fa-pencil" />
                 <i id="drag" className="fa fa-arrows-alt" />
               </div>
             </div>
@@ -152,6 +124,5 @@ class App extends Component {
   }
 
 }
-
 
 ReactDOM.render(<App />, document.getElementById('main'));
