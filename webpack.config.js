@@ -4,7 +4,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 
 const extractSass = new ExtractTextPlugin({
-  filename: 'style.css',
+  filename: 'style.scss',
   disable: process.env.NODE_ENV === 'development',
 });
 
