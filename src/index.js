@@ -10,7 +10,7 @@ import Note from './components/note';
 import EditBox from './components/editBox';
 import './style.scss';
 
-/* eslint class-methods-use-this: ["error", { "exceptMethods": ["onStartDrag","onStopDrag","onDrag"] }] */
+/* eslint class-methods-use-this: ["error", { "exceptMethods": ["handleDrag"] }] */
 
 class App extends Component {
 
@@ -24,7 +24,6 @@ class App extends Component {
     };
 
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.onStopDrag = this.onStopDrag.bind(this);
     this.renderContent = this.renderContent.bind(this);
     this.createNote = this.createNote.bind(this);
     this.updateText = this.updateText.bind(this);
@@ -38,15 +37,12 @@ class App extends Component {
   }
 
   /* Dragging callback methods*/
-  onStartDrag(e, ui) {
-    console.log('just started draggin');
-  }
-  onStopDrag(e, ui) {
-    const id = (ui.node.accessKey);
-    firebasedb.updatePosition(ui.x, ui.y, id);
-  }
-  onDrag(e, ui) {
-    console.log('draggin now');
+  handleDrag(e, ui) {
+    console.log(ui.x, ui.y);
+    console.log(ui);
+    console.log(e);
+    console.log(ui.node.id);
+    firebasedb.updatePosition(ui.x, ui.y, ui.node.id);
   }
 
   /* Note functionality */
@@ -85,21 +81,20 @@ class App extends Component {
         left: note.x,
         zIndex: note.zIndex,
       };
-      /*eslint-disable */
+
       return (
+        /* eslint-disable */
         <Draggable
-          defaultPosition={{x: 0, y: 0}}
-          onStart={this.onStartDrag}
-          onDrag={this.onDrag}
-          onStop={this.onStopDrag}
+          handle=".draggedItem"
+          onDrag={this.handleDrag}
         >
-          <div accessKey={id} key={id} style={noteStyle} className="Note">
+          <div id={id} key={id} style={noteStyle} className="Note">
             <div className="titleBarContainer">
               <h1 className="titleBarItem noteTitle">{title}</h1>
               <div className="titleBarItem">
                 <i onClick={() => firebasedb.deleteNote(id)} id="delete" className="fa fa-trash-o" />
                 <i onClick={() => firebasedb.isEditing(id)} id="edit" className="fa fa-pencil" />
-                <i id="drag" className="fa fa-arrows-alt" />
+                <i id="drag" className="fa fa-arrows-alt draggedItem" />
               </div>
             </div>
             <div className="contentArea">
@@ -108,7 +103,7 @@ class App extends Component {
           </div>
         </Draggable>
       );
-      /*eslint-enable*/
+      /* eslint-enable*/
     });
 
     return (
