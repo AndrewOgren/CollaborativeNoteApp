@@ -10,6 +10,8 @@ const config = {
   storageBucket: 'notes-47a47.appspot.com',
   messagingSenderId: '993194921801',
 };
+
+/* Methods for updating firebase with changes  */
 firebase.initializeApp(config);
 const database = firebase.database();
 

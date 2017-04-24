@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+/* Takes the title for the new note */
 class TextBar extends Component {
   constructor(props) {
     super(props);

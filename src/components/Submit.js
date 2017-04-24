@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-
+/* Submit button creates the note */
 class Submit extends Component {
 
   constructor(props) {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Textarea from 'react-textarea-autosize';
 import * as firebasedb from '../firebasedb';
-
+/* The Content that is displayed when editing */
 class EditBox extends Component {
   constructor(props) {
     super(props);

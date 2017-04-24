@@ -17,7 +17,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: 0,
       currentTitleText: '',
       notes: Immutable.Map(),
       isEditing: false,
@@ -38,10 +37,6 @@ class App extends Component {
 
   /* Dragging callback methods*/
   handleDrag(e, ui) {
-    console.log(ui.x, ui.y);
-    console.log(ui);
-    console.log(e);
-    console.log(ui.node.id);
     firebasedb.updatePosition(ui.x, ui.y, ui.node.id);
   }
 
@@ -61,6 +56,7 @@ class App extends Component {
   }
 
   renderContent(id) {
+    // When it's being edited, display edit box
     if (this.state.notes.get(id).isBeingEdited) {
       return <EditBox id={id} />;
     } else {
@@ -74,19 +70,21 @@ class App extends Component {
   render() {
     const Notes = this.state.notes.entrySeq().map(([id, note]) => {
       const title = note.title;
+      console.log(note.x);
+      console.log(note.y);
 
       const noteStyle = {
         position: 'absolute',
-        top: note.y,
-        left: note.x,
         zIndex: note.zIndex,
       };
 
+      // Returns the note with all of its information
       return (
         /* eslint-disable */
-        <Draggable
+        <Draggable key={id}
           handle=".draggedItem"
           onDrag={this.handleDrag}
+          position={{x: note.x, y: note.y}}
         >
           <div id={id} key={id} style={noteStyle} className="Note">
             <div className="titleBarContainer">

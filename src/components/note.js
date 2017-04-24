@@ -1,5 +1,6 @@
 import Immutable from 'immutable';
 
+/* The note object with initial values for its content */
 const Note = Immutable.Map({
   isBeingEdited: false,
   title: 'title',
