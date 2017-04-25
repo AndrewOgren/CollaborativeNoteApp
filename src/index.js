@@ -18,6 +18,7 @@ class App extends Component {
     super(props);
     this.state = {
       currentTitleText: '',
+      currentlyClickedID: null,
       notes: Immutable.Map(),
       isEditing: false,
     };
@@ -53,6 +54,16 @@ class App extends Component {
     this.setState({
       currentTitleText: text,
     });
+  }
+
+  handleClick(id) {
+    const oldNoteInFront = this.state.currentlyClickedID;
+    if (oldNoteInFront !== id) {
+      this.setState({
+        currentlyClickedID: id,
+      });
+      firebasedb.bringNoteToFront(id, oldNoteInFront);
+    }
   }
 
   renderContent(id) {
@@ -92,7 +103,7 @@ class App extends Component {
               <div className="titleBarItem">
                 <i onClick={() => firebasedb.deleteNote(id)} id="delete" className="fa fa-trash-o" />
                 <i onClick={() => firebasedb.isEditing(id)} id="edit" className="fa fa-pencil" />
-                <i id="drag" className="fa fa-arrows-alt draggedItem" />
+                <i onClick={() => this.handleClick(id)} id="drag" className="fa fa-arrows-alt draggedItem" />
               </div>
             </div>
             <div className="contentArea">
@@ -105,6 +116,7 @@ class App extends Component {
     });
 
     return (
+      /* eslint-disable */
       <div>
         <div className="noteCreationContainer">
           <TextBar updateText={this.updateText} />
@@ -113,6 +125,7 @@ class App extends Component {
         { Notes }
         <div />
       </div>
+      /* eslint-enable*/
     );
   }
 

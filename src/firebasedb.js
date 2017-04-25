@@ -31,6 +31,20 @@ function updatePosition(xPos, yPos, id) {
   database.ref('notes').child(id).update({ x: xPos, y: yPos });
 }
 
+function bringNoteToFront(id, oldNoteInFront) {
+  let oldNoteStillExists = false;
+  database.ref('notes').child(id).update({ zIndex: 100 });
+  firebase.database().ref('notes').on('value', (snapshot) => {
+    oldNoteStillExists = snapshot.hasChild(String(oldNoteInFront));
+  });
+
+  if (oldNoteInFront != null && oldNoteStillExists) {
+    console.log('somehow updated old note');
+    console.log(oldNoteInFront);
+    database.ref('notes').child(oldNoteInFront).update({ zIndex: 1 });
+  }
+}
+
 function doneEditing(id, content) {
   database.ref('notes').child(id).update({ text: content, isBeingEdited: false });
 }
@@ -42,5 +56,5 @@ function fetchNotes(callback) {
 }
 
 /* eslint-disable */
-export { fetchNotes, database, addNote, deleteNote, updatePosition, isEditing, doneEditing  };
+export { fetchNotes, database, addNote, deleteNote, updatePosition, isEditing, doneEditing, bringNoteToFront };
 /* eslint-enable */

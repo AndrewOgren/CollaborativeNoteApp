@@ -1,4 +1,5 @@
 $superSteel : rgb(183, 77, 214);
+$beautifulBlue : rgb(66, 185, 212);
 
 body {
   font-family: "Arial", sans-serif;
@@ -32,6 +33,22 @@ body {
 
 #delete, #edit, #drag {
   margin: 10px;
+}
+
+// #undo {
+//   box-sizing: border-box;
+//   margin: 5px;
+//   padding: 5px;
+//   height: 30px;
+//   width: 30px;
+//   background-color: $beautifulBlue;
+//   border: 1px solid black;
+//   border-radius: 6px;
+//   box-shadow: 0px 1px 0px 0px;
+// }
+
+#createNoteButton:hover {
+  box-shadow: 2px 2px 8px black;
 }
 
 #editBox {
