@@ -7,4 +7,4 @@ been overwriting the position after pulling a note's position from firebase, so 
 However, I fixed that, and everything else is working fine.
 
 ## Screenshot
-![]()
+![](./src/snapshots/CollaborativeNotes.png)
