@@ -81,9 +81,6 @@ class App extends Component {
   render() {
     const Notes = this.state.notes.entrySeq().map(([id, note]) => {
       const title = note.title;
-      console.log(note.x);
-      console.log(note.y);
-
       const noteStyle = {
         position: 'absolute',
         zIndex: note.zIndex,
@@ -91,11 +88,11 @@ class App extends Component {
 
       // Returns the note with all of its information
       return (
-        /* eslint-disable */
+
         <Draggable key={id}
           handle=".draggedItem"
           onDrag={this.handleDrag}
-          position={{x: note.x, y: note.y}}
+          position={{ x: note.x, y: note.y }}
         >
           <div id={id} key={id} style={noteStyle} className="Note">
             <div className="titleBarContainer">
@@ -112,11 +109,9 @@ class App extends Component {
           </div>
         </Draggable>
       );
-      /* eslint-enable*/
     });
 
     return (
-      /* eslint-disable */
       <div>
         <div className="noteCreationContainer">
           <TextBar updateText={this.updateText} />
@@ -125,7 +120,6 @@ class App extends Component {
         { Notes }
         <div />
       </div>
-      /* eslint-enable*/
     );
   }
 
