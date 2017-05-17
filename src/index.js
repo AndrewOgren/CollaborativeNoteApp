@@ -3,12 +3,15 @@ import marked from 'marked';
 import Draggable from 'react-draggable';
 import Immutable from 'immutable';
 import ReactDOM from 'react-dom';
-import * as firebasedb from './firebasedb';
+import io from 'socket.io-client';
+// import * as firebasedb from './firebasedb';
 import TextBar from './components/textBar';
 import Submit from './components/Submit';
 import Note from './components/note';
 import EditBox from './components/editBox';
 import './style.scss';
+
+const socketserver = 'http://localhost:9090';
 
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["handleDrag"] }] */
 
@@ -23,14 +26,21 @@ class App extends Component {
       isEditing: false,
     };
 
+    this.socket = io(socketserver);
+    this.socket.on('connect', () => { console.log('socket.io connected'); });
+    this.socket.on('disconnect', () => { console.log('socket.io disconnected'); });
+    this.socket.on('reconnect', () => { console.log('socket.io reconnected'); });
+    this.socket.on('error', (error) => { console.log(error); });
+
     this.componentDidMount = this.componentDidMount.bind(this);
     this.renderContent = this.renderContent.bind(this);
     this.createNote = this.createNote.bind(this);
     this.updateText = this.updateText.bind(this);
+    this.handleDrag = this.handleDrag.bind(this);
   }
 
   componentDidMount() {
-    firebasedb.fetchNotes((notes) => {
+    this.socket.on('notes', (notes) => {
       console.log(notes);
       this.setState({ notes: Immutable.Map(notes) });
     });
@@ -38,7 +48,7 @@ class App extends Component {
 
   /* Dragging callback methods*/
   handleDrag(e, ui) {
-    firebasedb.updatePosition(ui.x, ui.y, ui.node.id);
+    this.socket.emit('updateNote', ui.node.id, { x: ui.x, y: ui.y });
   }
 
   /* Note functionality */
@@ -47,7 +57,7 @@ class App extends Component {
     let note = Note;
     note = note.set('title', this.state.currentTitleText);
     console.log(note);
-    firebasedb.addNote(JSON.parse(JSON.stringify(note)));
+    this.socket.emit('createNote', JSON.parse(JSON.stringify(note)));
   }
 
   updateText(text) {
@@ -56,15 +66,15 @@ class App extends Component {
     });
   }
 
-  handleClick(id) {
-    const oldNoteInFront = this.state.currentlyClickedID;
-    if (oldNoteInFront !== id) {
-      this.setState({
-        currentlyClickedID: id,
-      });
-      firebasedb.bringNoteToFront(id, oldNoteInFront);
-    }
-  }
+  // handleClick(id) {
+  //   const oldNoteInFront = this.state.currentlyClickedID;
+  //   if (oldNoteInFront !== id) {
+  //     this.setState({
+  //       currentlyClickedID: id,
+  //     });
+  //     // firebasedb.bringNoteToFront(id, oldNoteInFront);
+  //   }
+  // }
 
   renderContent(id) {
     // When it's being edited, display edit box
@@ -98,8 +108,8 @@ class App extends Component {
             <div className="titleBarContainer">
               <h1 className="titleBarItem noteTitle">{title}</h1>
               <div className="titleBarItem">
-                <i onClick={() => firebasedb.deleteNote(id)} id="delete" className="fa fa-trash-o" />
-                <i onClick={() => firebasedb.isEditing(id)} id="edit" className="fa fa-pencil" />
+                <i onClick={() => this.socket.emit('deleteNote', id)} id="delete" className="fa fa-trash-o" />
+                <i onClick={() => this.socket.emit('updateNote', id, { isBeingEdited: true })} id="edit" className="fa fa-pencil" />
                 <i onClick={() => this.handleClick(id)} id="drag" className="fa fa-arrows-alt draggedItem" />
               </div>
             </div>
